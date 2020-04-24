@@ -13,6 +13,7 @@ const api = {
 	      before: () => {},
 	      success: (result, status) => {},
 	      error: (status, error) => {},
+	      parogress:() => {},
 	      complete: (status) => {}
 	    }, settings);
 	    api.hub[key] = _s
@@ -53,31 +54,33 @@ const api = {
     	});
     	// 在一个资源的加载进度停止之后被触发
     	xhr.addEventListener('loadend', e => {
-		(null != complete) ? complete(xhr.status) : _s.complete(xhr.status)
+			(null != complete) ? complete(xhr.status) : _s.complete(xhr.status)
     	});
     	// 当程序开始加载时，loadstart 事件将被触发
     	xhr.addEventListener('loadstart', e => {
-		(null != before) ? before() : _s.before()
+			(null != before) ? before() : _s.before()
     	});
     	// progress事件会在请求接收到数据的时候被周期性触发。
     	xhr.addEventListener('parogress', e => {
-		console.log("数据调用中")
+			console.log("数据调用中")
+			_s.parogress();
     	});
     	// 当进度由于预定时间到期而终止时，会触发timeout 事件。
     	xhr.addEventListener('timeout', e => {
     		console.log("调用超时")
+    		({} != error) ? error(xhr.status, e) : _s.error(xhr.status, e)
     	});
 		switch(_s.type.toUpperCase()) {
-		case 'GET':
-		case "DELETE":
-		var suffix = ((_s.url).indexOf('?') !== -1) ? api._objectConverString(param) : ("?" + api._objectConverString(param))
-		_s.url += suffix
-		_s.data = null
-		break;
-		case "POST":
-		case "PUT":
-		_s.data = api._buildHttpParam(param)
-		break;
+			case 'GET':
+			case "DELETE":
+				var suffix = ((_s.url).indexOf('?') !== -1) ? api._objectConverString(param) : ("?" + api._objectConverString(param))
+				_s.url += suffix
+				_s.data = null
+				break;
+			case "POST":
+			case "PUT":
+				_s.data = api._buildHttpParam(param)
+				break;
 		}
 		// 初始化请求
     	xhr.open(_s.type, _s.url, _s.async);
@@ -117,4 +120,4 @@ const api = {
 	    }
 	    return arrResult.join('&');
 	}
-	}
+}

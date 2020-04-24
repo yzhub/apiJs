@@ -58,3 +58,4 @@ api.getdata(
 |success|func|调用成功时执行||
 |error|func|调用失败时候执行||
 |complete|func|调用完成后执行||
+|parogress|func|调用中执行||
